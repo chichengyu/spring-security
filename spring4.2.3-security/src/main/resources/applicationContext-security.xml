@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--*********** 注解权限控制  start ***********-->
+    <!-- 开启 jsr250 注解，需要添加 tomcat 中的 annotations-api.jar 包，注解 @RolesAllowed 才能找到
+    <security:global-method-security jsr250-annotations="enabled"/>
+     开启 注解 @Secured 使用
+    <security:global-method-security secured-annotations="enabled"/>
+     ***注意：使用注解 @RolesAllowed("ADMIN") 时，不需要加 ROLE_ 前缀
+        使用 注解 @Secured("ROLE_ADMIN") 时，需要加 ROLE_前缀
+    -->
+    <security:global-method-security pre-post-annotations="enabled"/>
+    <!--*********** 注解权限控制  end ***********-->
+
+    <security:http>
+        <!-- 拦截资源 -->
+        <security:intercept-url pattern="/product/list" access="hasAuthority('ROLE_LIST_PRODUCT')"/>
+        <security:intercept-url pattern="/product/add" access="hasAuthority('ROLE_ADD_PRODUCT')"/>
+        <security:intercept-url pattern="/product/edit" access="hasAuthority('ROLE_UPDATE_PRODUCT')"/>
+        <security:intercept-url pattern="/product/delete" access="hasAuthority('ROLE_DELETE_PRODUCT')"/>
+        <!-- 放行路由（包括静态资源） -->
+        <security:intercept-url pattern="/images/**" access="permitAll()"/>
+        <security:intercept-url pattern="/css/**" access="permitAll()"/>
+        <security:intercept-url pattern="/js/**" access="permitAll()"/>
+        <security:intercept-url pattern="/index" access="permitAll()"/>
+        <security:intercept-url pattern="/userlogin" access="permitAll()"/>
+
+        <!-- 自定义Spring Security过滤器（验证登陆验证码） -->
+        <security:custom-filter ref="authenticationFilter" before="FORM_LOGIN_FILTER"/>
+
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+        <!--<security:form-login login-page="/userlogin" authentication-failure-url="/userlogin?error=true"/>-->
+        <!--
+            login-page 登陆页面
+            login-processing-url 登陆提交的地址
+         -->
+        <security:form-login login-page="/userlogin" authentication-success-handler-ref="myAuthenticationnSuccessHandler" authentication-failure-handler-ref="myAuthenticationFailureHandler"/>
+        <!-- 权限不足页面 -->
+        <security:access-denied-handler error-page="/error" />
+        <!-- 关闭 csrf -->
+        <security:csrf disabled="true"/>
+        <!-- 记住账号密码 -->
+        <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600"/>
+    </security:http>
+
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="myUserDetailsService">
+            <!--<security:user-service>
+                <security:user name="abc" password="123" authorities="ROLE_USER"/>
+            </security:user-service>-->
+
+            <!--使用加密算法对用户输入的密码进入加密，然后和数据库的密码进行配对 -->
+            <security:password-encoder ref="bCryptPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!-- 顶顶一 -->
+    <bean id="myUserDetailsService" class="com.security.MyUserDetailsService"/>
+
+    <bean id="myAuthenticationnSuccessHandler" class="com.security.MyAuthenticationnSuccessHandler"/>
+    <bean id="myAuthenticationFailureHandler" class="com.security.MyAuthenticationFailureHandler"/>
+
+    <!-- 密码加密 -->
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!-- 自定义验证码过滤器 -->
+    <bean id="authenticationFilter" class="com.security.ImageCodeAuthenticationFilter"/>
+
+    <!-- 配置记住密码，表单name名称必须叫 remember-me -->
+    <bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动创建记住密码的一张表 -->
+        <property name="createTableOnStartup" value="true"/>
+    </bean>
+</beans>

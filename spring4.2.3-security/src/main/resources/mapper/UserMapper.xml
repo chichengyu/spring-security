@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.security.dao.UserDao">
+    <select id="findByUsername" parameterType="string" resultType="user">
+        select * from sys_user where username=#{username}
+    </select>
+
+    <select id="findPermissionByUsername" parameterType="string" resultType="permission">
+        select p.*
+        from sys_user u
+        inner join sys_user_role su on u.id=su.user_id
+        inner join sys_role_permission rp on su.role_id=rp.role_id
+        inner join sys_permission p on rp.permission_id=p.id
+        where u.username=#{username}
+    </select>
+</mapper>
