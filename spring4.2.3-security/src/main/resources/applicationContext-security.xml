@@ -70,7 +70,9 @@
     <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <!-- 自定义验证码过滤器 -->
-    <bean id="authenticationFilter" class="com.security.ImageCodeAuthenticationFilter"/>
+    <bean id="authenticationFilter" class="com.security.ImageCodeAuthenticationFilter">
+        <property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
+    </bean>
 
     <!-- 配置记住密码，表单name名称必须叫 remember-me -->
     <bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
