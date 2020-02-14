@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,9 @@ import org.springframework.stereotype.Component;
 import com.mayikt.entity.Permission;
 import com.mayikt.mapper.PermissionMapper;
 //
-//import com.mayikt.handler.MyAuthenticationFailureHandler;
-//import com.mayikt.handler.MyAuthenticationSuccessHandler;
+//import com.mayikt.security.MyAuthenticationFailureHandler;
+//import com.mayikt.security.MyAuthenticationSuccessHandler;
+//import com.mayikt.security.ImageCodeAuthenticationFilter;
 import com.mayikt.security.MyUserDetailService;
 import com.mayikt.utils.MD5Util;
 
@@ -60,8 +62,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	// 配置拦截请求资源
 	protected void configure(HttpSecurity http) throws Exception {
+		// ImageCodeAuthenticationFilter imageCodeAuthenticationFilter = new ImageCodeAuthenticationFilter();
+		// imageCodeAuthenticationFilter.setAuthenticationFailureHandler(failureHandler);
 		// // 如何权限控制 给每一个请求路径 分配一个权限名称 让后账号只要关联该名称，就可以有访问权限
-		// http.authorizeRequests()
+		// 验证码
+		// http.addFilterBefore(imageCodeAuthenticationFilter,UsernamePasswordAuthenticationFilter.class)
+		//	.authorizeRequests()
 		// // 配置查询订单权限
 		// .antMatchers("/showOrder").hasAnyAuthority("showOrder")
 		// .antMatchers("/addOrder").hasAnyAuthority("addOrder")
