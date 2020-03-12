@@ -6,3 +6,6 @@
 
 ### springBoot2.0.1-Security
 实现了动态授权
+
+### springBoot2.1.6-Shiro
+springBoot-Shiro ：SpringBoot2.1.6 + Shiro + JWT + Redis + thymeleaf 实现的权限管理系统

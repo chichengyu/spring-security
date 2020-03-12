@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.dao.SysDeptDao">
+  <resultMap id="BaseResultMap" type="com.shiro.pojo.SysDept">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="dept_no" jdbcType="VARCHAR" property="deptNo" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="pid" jdbcType="VARCHAR" property="pid" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="relation_code" jdbcType="VARCHAR" property="relationCode" />
+    <result column="dept_manager_id" jdbcType="VARCHAR" property="deptManagerId" />
+    <result column="manager_name" jdbcType="VARCHAR" property="managerName" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+  </resultMap>
+  <insert id="insert" parameterType="com.shiro.pojo.SysDept">
+    insert into sys_dept (id, dept_no, `name`, 
+      pid, `status`, relation_code, 
+      dept_manager_id, manager_name, phone, 
+      create_time, update_time, deleted
+      )
+    values (#{id,jdbcType=VARCHAR}, #{deptNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{pid,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{relationCode,jdbcType=VARCHAR}, 
+      #{deptManagerId,jdbcType=VARCHAR}, #{managerName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shiro.pojo.SysDept">
+    insert into sys_dept
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deptNo != null">
+        dept_no,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="relationCode != null">
+        relation_code,
+      </if>
+      <if test="deptManagerId != null">
+        dept_manager_id,
+      </if>
+      <if test="managerName != null">
+        manager_name,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="deptNo != null">
+        #{deptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="relationCode != null">
+        #{relationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deptManagerId != null">
+        #{deptManagerId,jdbcType=VARCHAR},
+      </if>
+      <if test="managerName != null">
+        #{managerName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shiro.pojo.SysDept">
+    update sys_dept
+    <set>
+      <if test="deptNo != null">
+        dept_no=#{deptNo},
+      </if>
+      <if test="name != null">
+        name=#{name},
+      </if>
+      <if test="pid != null">
+        pid=#{pid},
+      </if>
+      <if test="relationCode != null">
+        relation_code=#{relationCode},
+      </if>
+      <if test="deptManagerId != null">
+        dept_manager_id=#{deptManagerId},
+      </if>
+      <if test="managerName != null">
+        manager_name=#{managerName},
+      </if>
+      <if test="phone != null">
+        phone=#{phone},
+      </if>
+      <if test="createTime != null">
+        create_time=#{createTime},
+      </if>
+      <if test="updateTime != null">
+        update_time=#{updateTime},
+      </if>
+      <if test="deleted != null">
+        deleted=#{deleted},
+      </if>
+    </set>
+    where id=#{id}
+  </update>
+
+  <select id="selectAll" resultType="SysDept" parameterType="string">
+    select *
+    from sys_dept
+    where deleted=1
+    <if test="deptId != null and deptId != ''">
+      and id<![CDATA[<>]]>#{deptId}
+      and pid<![CDATA[<>]]>#{deptId}
+    </if>
+  </select>
+
+  <select id="selectByPrimaryKey" resultType="SysDept" parameterType="string">
+    select *
+    from sys_dept
+    where id=#{id} and deleted=1
+  </select>
+
+  <!-- 更新层级关系编码 -->
+  <update id="updateRelationCode">
+    update sys_dept
+    set relation_code=replace(relation_code,#{oleStr},#{newStr})
+    where relation_code like concat(#{relationCode},'%')
+  </update>
+
+  <select id="selectChildIds" resultType="java.lang.String" parameterType="string">
+    select id
+    from sys_dept
+    where relation_code like concat(#{relationCode},'%') and deleted=1
+  </select>
+
+  <update id="deletedDepts" parameterType="java.util.Date">
+    update sys_dept
+    <set>
+      deleted=0,
+      <if test="updateTime != null">
+        update_time=#{updateTime},
+      </if>
+    </set>
+    where id in
+    <foreach collection="list" item="item" separator="," open="(" close=")">
+        #{item}
+    </foreach>
+  </update>
+</mapper>

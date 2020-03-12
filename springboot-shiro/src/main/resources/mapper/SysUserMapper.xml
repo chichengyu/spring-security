@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.dao.SysUserDao">
+  <resultMap id="BaseResultMap" type="com.shiro.pojo.SysUser">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="sex" jdbcType="TINYINT" property="sex" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="update_id" jdbcType="VARCHAR" property="updateId" />
+    <result column="create_where" jdbcType="TINYINT" property="createWhere" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.shiro.pojo.SysUser">
+    insert into sys_user (id, username, salt, 
+      `password`, phone, dept_id, 
+      real_name, nick_name, email, 
+      `status`, sex, deleted, 
+      create_id, update_id, create_where, 
+      create_time, update_time)
+    values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, 
+      #{realName,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{sex,jdbcType=TINYINT}, #{deleted,jdbcType=TINYINT}, 
+      #{createId,jdbcType=VARCHAR}, #{updateId,jdbcType=VARCHAR}, #{createWhere,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shiro.pojo.SysUser">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="salt != null">
+        salt,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="updateId != null">
+        update_id,
+      </if>
+      <if test="createWhere != null">
+        create_where,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null">
+        #{updateId,jdbcType=VARCHAR},
+      </if>
+      <if test="createWhere != null">
+        #{createWhere,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+  <sql id="base_sysuser_sql">
+    id, username, salt, `password`, phone, dept_id, real_name, nick_name, email, `status`, sex, deleted,
+    create_id, update_id, create_where,create_time, update_time
+  </sql>
+
+  <select id="findByUsername" resultType="SysUser" parameterType="string">
+    select * from sys_user where username=#{username} and deleted=1
+  </select>
+
+  <select id="selectByPrimaryKey" resultType="SysUser" parameterType="string">
+    select su.*,sd.name dept_name
+    from sys_user su
+    left join sys_dept sd on sd.id=su.dept_id
+    where su.id=#{id}
+    and su.deleted=1
+  </select>
+
+  <!-- 分页查询用户（包括搜索条件） -->
+  <select id="selectAll" resultType="SysUserDept" parameterType="com.shiro.vo.req.UserPageReqVo">
+    select su.*,sd.name dept_name
+    from sys_user su
+    left join sys_dept sd
+    on sd.id=su.dept_id
+    <where>
+      su.deleted=1
+      <if test="userId != null and userId != ''">
+        and su.id=#{userId}
+      </if>
+      <if test="username != null and username != ''">
+        and su.username like concat('%',#{username},'%')
+      </if>
+      <if test="nickName != null and nickName != ''">
+        and su.nick_name like concat('%',#{nickName},'%')
+      </if>
+      <if test="status != null and status!=''">
+        and su.status=#{status}
+      </if>
+      <if test="startTime != null and startTime != ''">
+        and su.create_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        and su.create_time &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <!-- 更新用户信息 -->
+  <update id="updateSelective" parameterType="com.shiro.pojo.SysUser">
+    update sys_user
+    <set>
+        <if test="username != null">
+          username=#{username},
+        </if>
+        <if test="salt != null">
+          salt=#{salt},
+        </if>
+        <if test="password != null">
+          `password`=#{password},
+        </if>
+        <if test="phone != null">
+          phone=#{phone},
+        </if>
+        <if test="deptId != null">
+          dept_id=#{deptId},
+        </if>
+        <if test="realName != null">
+          real_name=#{realName},
+        </if>
+        <if test="nickName != null">
+          nick_name=#{nickName},
+        </if>
+        <if test="email != null">
+          email=#{email},
+        </if>
+        <if test="status != null">
+          `status`=#{status},
+        </if>
+        <if test="sex != null">
+          sex=#{sex},
+        </if>
+        <if test="deleted != null">
+          deleted={deleted},
+        </if>
+        <if test="createId != null">
+          create_id=#{createId},
+        </if>
+        <if test="updateId != null">
+          update_id=#{updateId},
+        </if>
+        <if test="createWhere != null">
+          create_where=#{createWhere},
+        </if>
+        <if test="createTime != null">
+          create_time=#{createTime},
+        </if>
+        <if test="updateTime != null">
+          update_time=#{updateTime},
+        </if>
+    </set>
+    where id=#{id}
+  </update>
+
+
+  <!-- 批量删除用户 -->
+  <update id="deletedUsers" parameterType="com.shiro.pojo.SysUser">
+    update sys_user
+    <set>
+      deleted=0,
+      <if test="sysUser.updateId != null and sysUser.updateId != ''">
+        update_id=#{sysUser.updateId},
+      </if>
+      <if test="sysUser.updateTime != null">
+        update_time=#{sysUser.updateTime},
+      </if>
+    </set>
+    where id in
+    <foreach collection="list" separator="," open="(" close=")" item="item">
+        #{item}
+    </foreach>
+  </update>
+
+  <select id="selectUserInfoByDeptIds" resultType="int">
+    select count(1)
+    from sys_user
+    where dept_id in
+    <foreach collection="list" item="item" separator="," open="(" close=")">
+        #{item}
+    </foreach>
+    and deleted=1
+  </select>
+</mapper>
