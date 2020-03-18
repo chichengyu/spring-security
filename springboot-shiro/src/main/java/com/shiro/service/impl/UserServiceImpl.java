@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.shiro.config.TokenConfig;
 import com.shiro.constarts.Constant;
 import com.shiro.dao.SysUserDao;
+import com.shiro.dao.SysUserRoleDao;
 import com.shiro.enums.ResponseCode;
 import com.shiro.exception.BusinessException;
 import com.shiro.pojo.SysUser;
@@ -22,11 +23,16 @@ import com.shiro.vo.req.LoginReqVo;
 import com.shiro.vo.req.UserAddReqVo;
 import com.shiro.vo.req.UserOwnRoleReqVo;
 import com.shiro.vo.req.UserPageReqVo;
+import com.shiro.vo.req.UserUpdateDetailInfoReqVo;
+import com.shiro.vo.req.UserUpdatePasswordReqVo;
 import com.shiro.vo.req.UserUpdateReqVo;
 import com.shiro.vo.resp.LoginRespVo;
 import com.shiro.vo.resp.PageVo;
 import com.shiro.vo.resp.UserOwnRoleRespVo;
+import com.shiro.vo.resp.UserRespVo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +66,8 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private SysUserRoleDao sysUserRoleDao;
 
     /**
      * 登陆
@@ -78,19 +86,23 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus() == 2){// 账号锁定
             return Response.error(ResponseCode.ACCOUNT_LOCK.getMessage());
         }
-        List<String> roles = new ArrayList<>();
-        roles.add("admin");
-        List<String> permissions = new ArrayList<>();
-        permissions.add("sys:user");
-        permissions.add("user:test");
+        // 通过用户id获取该用户所拥有的角色名称
+        List<String> roleNames = sysUserRoleDao.getRoleNameByUserId(user.getId());
+        // 通过用户id获取该用户所拥有的权限授权 如：sys:user:add
+        List<String> permissionPerms = sysUserRoleDao.getPermissionPermsByUserId(user.getId());
+        /*List<String> roleNames = new ArrayList<>();
+        roleNames.add("admin");
+        List<String> permissionPerms = new ArrayList<>();
+        permissionPerms.add("sys:user");
+        permissionPerms.add("user:test");*/
         // 用户业务 token 令牌
         String accessToken = JwtTokenUtil.getInstance()
                 .setIssuer(tokenConfig.getIssuer())
                 .setSecret(tokenConfig.getSecretKey())
                 .setExpired(tokenConfig.getAccessTokenExpireTime().toMillis())
                 .setSubObject(user.getId())
-                .setClaim(Constant.JWT_ROLES_KEY, JSON.toJSONString(roles))
-                .setClaim(Constant.JWT_PERMISSIONS_KEY, JSON.toJSONString(permissions))
+                .setClaim(Constant.JWT_ROLES_KEY, JSON.toJSONString(roleNames))
+                .setClaim(Constant.JWT_PERMISSIONS_KEY, JSON.toJSONString(permissionPerms))
                 .setClaim(Constant.JWT_USER_NAME, user.getUsername())
                 .generateToken();
         // 刷新 refresh token
@@ -100,8 +112,8 @@ public class UserServiceImpl implements UserService {
                 .setSecret(tokenConfig.getSecretKey())
                 .setExpired(refreshTokenTime.toMillis())
                 .setSubObject(user.getId())
-                .setClaim(Constant.JWT_ROLES_KEY, JSON.toJSONString(roles))
-                .setClaim(Constant.JWT_PERMISSIONS_KEY, JSON.toJSONString(permissions))
+                .setClaim(Constant.JWT_ROLES_KEY, JSON.toJSONString(roleNames))
+                .setClaim(Constant.JWT_PERMISSIONS_KEY, JSON.toJSONString(permissionPerms))
                 .setClaim(Constant.JWT_USER_NAME, user.getUsername())
                 .generateToken();
         LoginRespVo loginRespVo = new LoginRespVo();
@@ -123,6 +135,11 @@ public class UserServiceImpl implements UserService {
     public Response<String> logout(String accessToken, String refreshToken) {
         if (StringUtils.isBlank(accessToken) || StringUtils.isBlank(refreshToken)){
             throw new BusinessException(ResponseCode.DATA_ERROR);
+        }
+        // shiro 退出
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()){
+            subject.logout();
         }
         // 获取用户 id
         String userId = JwtTokenUtil.getInstance().getUserId(accessToken);
@@ -309,4 +326,76 @@ public class UserServiceImpl implements UserService {
         return Response.success(ResponseCode.SUCCESS.getMessage());
     }
 
+    /**
+     * 获取个人资料编辑信息
+     * @param userId
+     * @return
+     */
+    @Override
+    public Response<UserRespVo> detailInfo(String userId) {
+        SysUser sysUser = sysUserDao.selectByPrimaryKey(userId);
+        UserRespVo userRespVo = new UserRespVo();
+        BeanUtils.copyProperties(sysUser,userRespVo);
+        return Response.success(userRespVo);
+    }
+
+    /**
+     * 保存个人信息接口
+     * @param updateDetailInfoReqVo
+     * @param userId
+     * @return
+     */
+    @Override
+    public Response<String> userUpdateDetailInfo(UserUpdateDetailInfoReqVo updateDetailInfoReqVo, String userId) {
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(updateDetailInfoReqVo,sysUser);
+        sysUser.setId(userId);
+        sysUser.setUpdateId(userId);
+        sysUser.setUpdateTime(new Date());
+        int updateCount = sysUserDao.updateSelective(sysUser);
+        if (updateCount != 1){
+            throw new BusinessException(ResponseCode.OPERATION_ERROR);
+        }
+        return Response.success(ResponseCode.SUCCESS.getMessage());
+    }
+
+    /**
+     * 修改个人密码
+     * @param userUpdatePasswordReqVo
+     * @param accessToken
+     * @param refreshToken
+     * @return
+     */
+    @Override
+    public Response<String> userUpdatePassword(UserUpdatePasswordReqVo userUpdatePasswordReqVo, String accessToken, String refreshToken) {
+        JwtTokenUtil instance = JwtTokenUtil.getInstance();
+        String userId = instance.getUserId(accessToken);
+        SysUser sysUser = sysUserDao.selectByPrimaryKey(userId);
+        if (sysUser == null){
+            throw new BusinessException(ResponseCode.TOKEN_ERROR);
+        }
+        if (!BCrypt.checkpw(userUpdatePasswordReqVo.getOldPwd(),sysUser.getPassword())){
+            throw new BusinessException(ResponseCode.OLD_PASSWORD_ERROR);
+        }
+        sysUser.setUpdateId(userId);
+        sysUser.setPassword(BCrypt.hashpw(userUpdatePasswordReqVo.getNewPwd(),BCrypt.gensalt()));
+        sysUser.setUpdateTime(new Date());
+        int updateCount = sysUserDao.updateSelective(sysUser);
+        if (updateCount != 1){
+            throw new BusinessException(ResponseCode.OPERATION_ERROR);
+        }
+        /**
+         * 把token 加入黑名单 禁止再访问我们的系统资源
+         */
+        redisService.set(Constant.JWT_ACCESS_TOKEN_BLACKLIST+accessToken,userId,instance.getRemainingTime(accessToken), TimeUnit.MILLISECONDS);
+        /**
+         * 把 refreshToken 加入黑名单 禁止再拿来刷新token
+         */
+        redisService.set(Constant.JWT_REFRESH_TOKEN_BLACKLIST+refreshToken,userId,instance.getRemainingTime(refreshToken),TimeUnit.MILLISECONDS);
+        /**
+         * 清楚用户授权数据缓存
+         */
+        redisService.delete(Constant.IDENTIFY_CACHE_KEY+userId);
+        return Response.success(ResponseCode.SUCCESS.getMessage());
+    }
 }

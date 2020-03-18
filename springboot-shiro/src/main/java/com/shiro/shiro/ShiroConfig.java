@@ -1,5 +1,6 @@
 package com.shiro.shiro;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -15,6 +16,15 @@ import java.util.Map;
 
 @Configuration
 public class ShiroConfig {
+
+    /**
+     * thymeleaf-shiro 权限标签配置
+     * @return
+     */
+    @Bean
+    public ShiroDialect shiroDialect() {
+        return new ShiroDialect();
+    }
 
     /**
      * 缓存管理器
@@ -109,7 +119,6 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
-
 
     /**
      * 开启shiro aop注解支持.

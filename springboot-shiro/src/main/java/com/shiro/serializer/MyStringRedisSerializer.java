@@ -7,7 +7,7 @@ import org.springframework.util.Assert;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-/** redis 序列号策略
+/** redis 序列化策略
  * @ClassName: MyStringRedisSerializer
  */
 public class MyStringRedisSerializer implements RedisSerializer<Object> {

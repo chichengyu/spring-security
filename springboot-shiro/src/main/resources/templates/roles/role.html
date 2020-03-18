@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <!-- 公共部分 -->
     <!--/*/<th:block th:replace="_fragment :: head(~{::title})">/*/-->
@@ -98,6 +98,7 @@
 </script>
 <!-- 注释的方式引入公共部分 _fragment -->
 <!--/*/<th:block th:replace="_fragment :: script"/>/*/-->
+<!-- 私有部分 -->
 <script>
     layui.use(['common','jquery','form','table','laypage', 'layer','laydate','tree'],function () {
         var table = layui.table,
@@ -222,7 +223,7 @@
                 , id: 'permissionIds'
                 , accordion: false
                 , click: function (obj) {
-                    layer.msg(JSON.stringify(obj.data.title));
+                    layer.msg(obj.data.title);
                 }
             });
         };
@@ -297,7 +298,7 @@
                     $(".role_table_div").show();
                     //隐藏编辑窗口
                     $(".operation_role").hide();
-                    $(".layui-laypage-btn").click();
+                    //$(".layui-laypage-btn").click();
                 },"PUT",false,function (res) {
                     //无权限更新角色提示
                     layer.msg("抱歉！您暂无更新角色信息详情的权限");
@@ -402,7 +403,7 @@
                 //无权限访问角色详情提示
                 layer.msg("抱歉！您暂无获取角色信息详情的权限");
             });
-        }
+        };
 
         //删除前确认对话框
         var tipDialog=function (id,name) {

@@ -54,6 +54,24 @@ public class IndexController {
         return "users/user";
     }
 
+    @GetMapping("/logs")
+    @ApiOperation(value = "跳转日志管理页面",notes = "日志管理页面")
+    public String logs(){
+        return "logs/log";
+    }
+
+    @ApiOperation(value = "跳转个人信息编辑页面",notes = "个人信息编辑页面")
+    @GetMapping("/users/info")
+    public String usersInfo(){
+        return "users/user_edit";
+    }
+
+    @GetMapping("/users/pwd")
+    @ApiOperation(value = "跳转用户编辑密码页面",notes = "用户编辑密码页面")
+    public String updatePwd(){
+        return "users/user_pwd";
+    }
+
     @ApiOperation(value = "404",notes = "跳转404错误页面")
     @GetMapping("/404")
     public String error404(){

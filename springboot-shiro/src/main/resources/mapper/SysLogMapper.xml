@@ -19,7 +19,7 @@
       )
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
       #{operation,jdbcType=VARCHAR}, #{time,jdbcType=INTEGER}, #{method,jdbcType=VARCHAR}, 
-      #{params,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      #{params,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shiro.pojo.SysLog">
@@ -83,4 +83,37 @@
       </if>
     </trim>
   </insert>
+
+  <!-- 分页与条件查询所有数据 -->
+  <select id="selectAll" resultType="SysLog" parameterType="com.shiro.vo.req.LogPageReqVo">
+    select *
+    from sys_log
+    <where>
+      <if test="operation != null and operation != ''">
+        and operation like concat('%',#{operation},'%')
+      </if>
+      <if test="userId != null and userId != ''">
+        and user_id = #{userId}
+      </if>
+      <if test="username != null and username != ''">
+        and username like concat('%',#{username},'%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        and create_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        and create_time &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <!-- 删除日志（包括批量删除） -->
+  <delete id="batchDeletedLog">
+    delete
+    from sys_log
+    where id in
+    <foreach collection="list" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </delete>
 </mapper>

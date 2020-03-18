@@ -40,7 +40,6 @@ layui.define(['jquery','layer'], function(exports){
                             /*刷新token  然后存入缓存*/
                             obj.ajax("/api/user/token",null,function (res) {
                                 if(res.code == 1){
-                                    console.log(2000);
                                     obj.setData("access_token",res.data.authorization);
                                     /*刷新成功后继续重复请求*/
                                     obj.ajax(reUrl,reParams,reFt,reMethod,reHeaders,reNoAuthorityFt,reContentType,reAsync);
@@ -51,9 +50,9 @@ layui.define(['jquery','layer'], function(exports){
                             },"GET",true)
                         }/* else if(res.code == 1) {
                             callback && callback(res);
-                        } else if(res.code == 4030001){
+                        } */else if(res.code == 3){// 无权限
                             noAuthorityFt && noAuthorityFt(res);
-                        }*/
+                        }
                         else if (res.code == 2){
                             layer.msg(res.msg,function () {
                                 top.window.location.href="/index/login";

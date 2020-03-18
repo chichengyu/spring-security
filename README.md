@@ -1,4 +1,4 @@
-# spring-security
+# spring-rbac
 
 
 ### spring4.2.3-security
@@ -8,4 +8,4 @@
 实现了动态授权
 
 ### springBoot2.1.6-Shiro
-springBoot-Shiro ：SpringBoot2.1.6 + Shiro + JWT + Redis + thymeleaf 实现的权限管理系统
+springBoot-Shiro ：SpringBoot2.1.6 + Shiro + JWT + Redis + thymeleaf + layui 实现的权限管理系统

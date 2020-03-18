@@ -25,6 +25,7 @@
         <jbcrypt.version>0.4</jbcrypt.version>
         <pagehelper-spring-boot-starter.version>1.2.12</pagehelper-spring-boot-starter.version>
         <thymeleaf-extras-shiro.version>2.0.0</thymeleaf-extras-shiro.version>
+        <druid-spring-boot-starter.version>1.1.10</druid-spring-boot-starter.version>
     </properties>
 
     <dependencies>
@@ -32,6 +33,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- aop 依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <!-- thymeleaf 依赖-->
         <dependency>
@@ -135,6 +141,12 @@
             <version>${thymeleaf-extras-shiro.version}</version>
         </dependency>
 
+        <!-- druid数据源（这里我只使用日志监控） -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid-spring-boot-starter.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

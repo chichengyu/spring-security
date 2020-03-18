@@ -97,4 +97,22 @@
     from sys_user_role
     where role_id=#{roleId}
   </delete>
+
+  <!-- 通过用户id获取该用户所拥有的角色名称（用户登录时查询拥有角色） -->
+  <select id="getRoleNameByUserId" resultType="java.lang.String" parameterType="string">
+    select sr.name
+    from sys_user_role sur
+    left join sys_role sr on sr.id=sur.role_id
+    where sur.user_id=#{userId} and sr.name <![CDATA[<>]]> ''
+  </select>
+
+  <!-- 通过用户id获取该用户所拥有的权限授权 如：sys:user:add -->
+  <select id="getPermissionPermsByUserId" resultType="java.lang.String" parameterType="string">
+    select sp.perms
+    from sys_user_role sur
+    left join sys_role sr on sr.id=sur.role_id
+    left join sys_role_permission srp on srp.role_id=sr.id
+    left join sys_permission sp on sp.id=srp.permission_id
+    where sur.user_id=#{userId} and sp.perms <![CDATA[<>]]> ''
+  </select>
 </mapper>

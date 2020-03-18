@@ -8,6 +8,7 @@ public enum ResponseCode implements BaseCodeEnum {
      * 这个要和前段约定好
      *code=1：服务器已成功处理了请求。 通常，这表示服务器提供了请求的网页。
      *code=2：（授权异常） 请求要求身份验证。 客户端需要跳转到登录页面重新登录
+     *code=3： 无权限访问资源
      *code=-1：(凭证过期) 客户端请求刷新凭证接口
      *code=0：表示请求失败，只提示，不跳转，2 是跳转
      *
@@ -25,7 +26,7 @@ public enum ResponseCode implements BaseCodeEnum {
     SHIRO_AUTHENTICATION_ERROR(0,"用户认证异常"),
     ACCOUNT_HAS_DELETED_ERROR(2,"该账号已被删除，请联系系统管理员"),
     TOKEN_PAST_DUE(-1,"token失效,请刷新token"),
-    NOT_PERMISSION(0,"没有权限访问该资源"),
+    NOT_PERMISSION(3,"没有权限访问该资源"),
     OPERATION_ERROR(0,"操作失败"),
     OPERATION_MENU_PERMISSION_CATALOG_ERROR(0,"操作后的菜单类型是目录，所属菜单必须为默认顶级菜单或者目录"),
     OPERATION_MENU_PERMISSION_MENU_ERROR(0,"操作后的菜单类型是菜单，所属菜单必须为目录类型"),

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/layui/css/layui.css">
+    <!-- 公共部门 -->
+    <!--/*/<th:block th:replace="_fragment :: head(~{::title})">/*/-->
+        <title>权限管理系统-权限菜单</title>
+    <!--/*/</th:block>/*/-->
+    <!-- 私有部分 -->
     <link rel="stylesheet" href="/css/custom.form.css">
 </head>
 <body>
@@ -97,8 +99,9 @@
     <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:permission:update">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:permission:delete">删除</a>
 </script>
-<script src="/layui/layui.js"></script>
-<script src="/layui/index.js"></script>
+<!-- 注释的方式引入公共部分 _fragment -->
+<!--/*/<th:block th:replace="_fragment :: script"/>/*/-->
+<!-- 私有部分 -->
 <script>
     /*  自定义模块 treetable */
     layui.use(['common','treetable','table','jquery','form','tree'],function () {
@@ -137,10 +140,10 @@
                 toolbar: '#toolbar',
                 cols: [
                     [
-                        {type: 'numbers'},
+                        {fixed: 'left',type: 'numbers'},
                         {field: 'name', title: '菜单名称', width: 200},
-                        {field: 'url', title: 'url'},
-                        {field: 'method', title: '请求方式'},
+                        {field: 'url', title: 'url', width: 150},
+                        {field: 'method', title: '请求方式', width: 86},
                         {
                             field: 'type', title: '类型', templet: function(item){
                                 if(item.type === 1){
@@ -154,7 +157,7 @@
                                 }
                             }
                         },
-                        {field: 'pidName', title: '父级名称',templet:function (item) {
+                        {field: 'pidName', title: '父级名称', width: 115,templet:function (item) {
                                 if(item.pidName ===null || item.pidName=== undefined){
                                     return "顶级菜单";
                                 }else {
@@ -162,10 +165,10 @@
                                 }
                             }},
                         {field: 'orderNum', title: '排序'},
-                        {field: 'perms', title: '资源标识'},
-                        {field: 'code', title: '前后端分离按钮控制标识'},
+                        {field: 'perms', title: '资源标识', width: 150},
+                        {field: 'code', title: '前后端分离按钮控制标识', width: 150},
                         {
-                            field: 'createTime', title: '创建时间', minWidth: 120 , templet: function (item) {
+                            field: 'createTime', title: '创建时间', width: 160 , templet: function (item) {
                                 return common.formattime(item.createTime);
                             }
                         },
@@ -179,7 +182,7 @@
                                 }
                             }
                         },
-                        {title:'操作',width:180,toolbar:'#tool'}
+                        {fixed: 'right',title:'操作',width:180,toolbar:'#tool'}
                     ]
                 ]
             });

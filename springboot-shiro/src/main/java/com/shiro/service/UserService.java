@@ -6,10 +6,13 @@ import com.shiro.vo.req.LoginReqVo;
 import com.shiro.vo.req.UserAddReqVo;
 import com.shiro.vo.req.UserOwnRoleReqVo;
 import com.shiro.vo.req.UserPageReqVo;
+import com.shiro.vo.req.UserUpdateDetailInfoReqVo;
+import com.shiro.vo.req.UserUpdatePasswordReqVo;
 import com.shiro.vo.req.UserUpdateReqVo;
 import com.shiro.vo.resp.LoginRespVo;
 import com.shiro.vo.resp.PageVo;
 import com.shiro.vo.resp.UserOwnRoleRespVo;
+import com.shiro.vo.resp.UserRespVo;
 
 import java.util.List;
 
@@ -81,5 +84,27 @@ public interface UserService {
      */
     Response<String> deletedUsers(List<String> list, String operationId);
 
+    /**
+     * 获取个人资料编辑信息
+     * @param userId
+     * @return
+     */
+    Response<UserRespVo> detailInfo(String userId);
 
+    /**
+     * 保存个人信息接口
+     * @param updateDetailInfoReqVo
+     * @param userId
+     * @return
+     */
+    Response<String> userUpdateDetailInfo(UserUpdateDetailInfoReqVo updateDetailInfoReqVo, String userId);
+
+    /**
+     * 修改个人密码
+     * @param userUpdatePasswordReqVo
+     * @param accessToken
+     * @param refreshToken
+     * @return
+     */
+    Response<String> userUpdatePassword(UserUpdatePasswordReqVo userUpdatePasswordReqVo, String accessToken, String refreshToken);
 }

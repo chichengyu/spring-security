@@ -1,6 +1,7 @@
 package com.shiro.controller;
 
 
+import com.shiro.aop.annotation.MyLog;
 import com.shiro.constarts.Constant;
 import com.shiro.service.HomeService;
 import com.shiro.utils.JwtTokenUtil;
@@ -22,6 +23,7 @@ public class HomeController {
     @Autowired
     private HomeService homeService;
 
+    @MyLog(title = "首页模块",action = "获取首页数据接口")
     @ApiOperation(value = "获取首页数据接口",notes = "首页数据")
     @GetMapping("/home")
     public Response getHome(HttpServletRequest request){

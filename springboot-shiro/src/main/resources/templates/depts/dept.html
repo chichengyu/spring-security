@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xml:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <!-- 公共部分 -->
     <!--/*/<th:block th:replace="_fragment :: head(~{::title})">/*/-->
@@ -66,7 +66,6 @@
             <i class="layui-icon">&#xe608;</i> 添加
         </button>
     </div>
-
 </script>
 <script type="text/html" id="tool">
     <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:dept:update">编辑</a>
@@ -74,6 +73,7 @@
 </script>
 <!-- 注释的方式引入公共部分 _fragment -->
 <!--/*/<th:block th:replace="_fragment :: script"/>/*/-->
+<!-- 私有部分 -->
 <script>
     layui.use(['common','treetable','jquery','form','tree','table'],function () {
         var treetable = layui.treetable,

@@ -55,8 +55,8 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<PermissionRespNodeVo> permissionTreeListByUserId(String userId) {
-        // TODO: 这先查询所有菜单
-        return getTree(selectAll(),false);
+        List<SysPermission> permissionList = sysPermissionDao.getPermissionByUserId(userId);
+        return getTree(permissionList,false);
     }
 
     /**

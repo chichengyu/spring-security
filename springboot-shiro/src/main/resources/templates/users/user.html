@@ -109,6 +109,7 @@
 </script>
 <!-- 注释的方式引入公共部分 _fragment -->
 <!--/*/<th:block th:replace="_fragment :: script"/>/*/-->
+<!-- 私有部分 -->
 <script>
     layui.use(['common','jquery','table','laypage','laydate','form','tree','layer','transfer'],function () {
         var $=layui.jquery;
@@ -338,7 +339,6 @@
                         $(".operation_user input[name=deptId]").val(selectNode.data.id);
                         $(".operation_user input[name=deptName]").val(selectNode.data.title);
                     }
-
                     layer.close(index);
                 }
             });

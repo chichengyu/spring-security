@@ -47,4 +47,20 @@ public interface SysUserRoleDao {
      * @return
      */
     int removeUseIdsrRoleId(String roleId);
+
+    //================== 权限数据 ====================
+
+    /**
+     * 通过用户id获取该用户所拥有的角色名称（用户登录时查询拥有角色）
+     * @param userId
+     * @return
+     */
+    List<String> getRoleNameByUserId(String userId);
+
+    /**
+     * 通过用户id获取该用户所拥有的权限授权 如：sys:user:add
+     * @param userId
+     * @return
+     */
+    List<String> getPermissionPermsByUserId(String userId);
 }

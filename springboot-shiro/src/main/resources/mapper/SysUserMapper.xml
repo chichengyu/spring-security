@@ -226,7 +226,7 @@
           sex=#{sex},
         </if>
         <if test="deleted != null">
-          deleted={deleted},
+          deleted=#{deleted},
         </if>
         <if test="createId != null">
           create_id=#{createId},
